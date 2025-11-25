@@ -405,6 +405,35 @@
             font-weight: 700;
             font-size: 1.15em;
             letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .delete-btn {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid rgba(255, 59, 48, 0.2);
+            color: #ff453a;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            width: 36px;
+            height: 36px;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 59, 48, 0.2);
+            border-color: rgba(255, 59, 48, 0.4);
+            transform: scale(1.05);
+        }
+
+        .delete-btn:active {
+            transform: scale(0.95);
         }
 
         .clear-btn {
@@ -490,7 +519,7 @@
                 </svg>
             </div>
             <h1>Arbeitszeit</h1>
-            <p class="subtitle">Erfasse deine tägliche Arbeitszeit</p>
+            <p class="subtitle">Erfasse deine tägliche Arbeitszeit präzise</p>
         </div>
 
         <div class="form-section">
@@ -618,7 +647,7 @@
             historySection.style.display = 'block';
             historyList.innerHTML = '';
 
-            history.forEach(entry => {
+            history.forEach((entry, index) => {
                 const item = document.createElement('div');
                 item.className = 'history-item';
                 item.innerHTML = `
@@ -628,10 +657,22 @@
                             ${entry.start} - ${entry.end} · Pause ${entry.pause} min
                         </div>
                     </div>
-                    <div class="history-hours">${minutesToTime(entry.arbeitszeit)}</div>
+                    <div class="history-hours">
+                        ${minutesToTime(entry.arbeitszeit)}
+                        <button class="delete-btn" onclick="deleteHistoryItem(${index})" title="Eintrag löschen">
+                            🗑️
+                        </button>
+                    </div>
                 `;
                 historyList.appendChild(item);
             });
+        }
+
+        function deleteHistoryItem(index) {
+            let history = JSON.parse(localStorage.getItem('arbeitszeitHistory') || '[]');
+            history.splice(index, 1);
+            localStorage.setItem('arbeitszeitHistory', JSON.stringify(history));
+            loadHistory();
         }
 
         function formatDate(dateString) {
