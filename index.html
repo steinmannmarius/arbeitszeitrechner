@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeMaster Pro | Arbeitszeiterfassung</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 h-full">
+    <custom-navbar></custom-navbar>
+    
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-primary to-secondary p-6 text-white">
+                <h1 class="text-2xl font-bold flex items-center gap-2">
+                    <i data-feather="clock"></i>
+                    Arbeitszeiterfassung
+                </h1>
+                <p class="text-primary-100 mt-1">Erfasse deine Arbeitszeiten und Pausen</p>
+            </div>
+
+            <!-- Timer Section -->
+            <div class="p-6 border-b">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-xl font-semibold text-gray-800">Aktuelle Sitzung</h2>
+                        <div id="currentTimer" class="text-4xl font-mono font-bold text-primary mt-2">00:00:00</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="startBtn" class="bg-primary hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition">
+                            <i data-feather="play"></i> Start
+                        </button>
+                        <button id="pauseBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition hidden">
+                            <i data-feather="pause"></i> Pause
+                        </button>
+                        <button id="stopBtn" class="bg-secondary hover:bg-secondary-600 text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition">
+                            <i data-feather="square"></i> Stopp
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Break Section -->
+            <div class="p-6 border-b">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Pause erfassen</h2>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pausenstart</label>
+                        <input type="time" id="breakStart" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pausenende</label>
+                        <input type="time" id="breakEnd" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div class="flex items-end">
+                        <button id="addBreakBtn" class="bg-primary hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition h-10">
+                            <i data-feather="plus"></i> Hinzufügen
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Zusammenfassung</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-500">Heute gearbeitet</div>
+                        <div id="todayWorked" class="text-2xl font-bold text-primary">00:00</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-500">Pausen gesamt</div>
+                        <div id="totalBreaks" class="text-2xl font-bold text-secondary">00:00</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-500">Netto Arbeitszeit</div>
+                        <div id="netWorkTime" class="text-2xl font-bold text-gray-800">00:00</div>
+                    </div>
+                </div>
+
+                <!-- Breaks List -->
+                <div class="mt-6">
+                    <h3 class="font-medium text-gray-700 mb-2">Erfasste Pausen</h3>
+                    <div id="breaksList" class="space-y-2">
+                        <div class="text-gray-500 italic">Noch keine Pausen erfasst</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-primary to-secondary p-6 text-white">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-feather="calendar"></i>
+                    Arbeitshistorie
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Datum</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ende</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pausen</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Netto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTable" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">Noch keine Einträge vorhanden</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <custom-footer></custom-footer>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="script.js"></script>
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>
